@@ -2,11 +2,17 @@ package com.wallet.walletapi.repository;
 
 import java.util.UUID;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.r2dbc.repository.Query;
+import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 
 import com.wallet.walletapi.entity.Wallet;
 
-public interface WalletRepository extends JpaRepository<Wallet, UUID>, JpaSpecificationExecutor<Wallet> {
+import reactor.core.publisher.Mono;
+
+public interface WalletRepository extends ReactiveCrudRepository<Wallet, UUID> {
     
+    @Query("SELECT * FROM wallet WHERE email = :email OR gsm_number = :gsmNumber LIMIT 1")
+    Mono<Wallet> findOneByEmailOrGsmNumber(String email, String gsmNumber);
+
+
 }

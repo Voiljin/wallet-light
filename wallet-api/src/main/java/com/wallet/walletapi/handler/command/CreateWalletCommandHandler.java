@@ -9,35 +9,43 @@ import com.wallet.walletapi.entity.Wallet;
 import com.wallet.walletapi.repository.WalletRepository;
 import com.wallet.walletapi.util.ReturnMessages;
 
-import java.math.BigDecimal;
-import java.util.Optional;
+import reactor.core.publisher.Mono;
 
+import java.math.BigDecimal;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CreateWalletCommandHandler implements CommandHandler<CreateWalletCommand, CreateWalletCommandResult> {
+public class CreateWalletCommandHandler implements CommandHandler<CreateWalletCommand, Mono<CreateWalletCommandResult>> {
 
     @Autowired
     private WalletRepository walletRepository;
 
     @Override
-    public CreateWalletCommandResult handle(CreateWalletCommand command) {
-        Specification<Wallet> spec = (root, query, cb) -> cb.or(
-            cb.equal(root.get("email"), command.getEmail()),
-            cb.equal(root.get("gsmNumber"), command.getGsmNumber())
-        );
-
-        Optional<Wallet> existingWallet = walletRepository.findOne(spec);
-
-        if(existingWallet.isPresent()){
-            throw new CustomException(ReturnMessages.WALLET_IS_EXIST.getCode(), ReturnMessages.WALLET_IS_EXIST.getMessage());
-        }
-
-        Wallet wallet = new Wallet(command.getCustomerId(), BigDecimal.ZERO, command.getEmail(), command.getGsmNumber(), true);
-
-        walletRepository.save(wallet);
-        return ResponseUtil.returnOk(new CreateWalletCommandResult());
+    public Mono<CreateWalletCommandResult> handle(CreateWalletCommand command) {
+        
+        return walletRepository.findOneByEmailOrGsmNumber(command.getEmail(), command.getGsmNumber())
+            .flatMap(existingWallet ->
+                Mono.<CreateWalletCommandResult> error(new CustomException(ReturnMessages.WALLET_IS_EXIST.getCode(), ReturnMessages.WALLET_IS_EXIST.getMessage()))
+            )
+            .switchIfEmpty(
+                Mono.defer(() -> {
+                    // Yeni wallet oluştur
+                    Wallet wallet = new Wallet(
+                        command.getCustomerId(), 
+                        BigDecimal.ZERO, 
+                        command.getEmail(), 
+                        command.getGsmNumber(), 
+                        true
+                    );
+                    
+                    // EntityListener otomatik olarak:
+                    // - ID = gen_random_uuid() (DB'de)
+                    // - CreatedDate = now
+                    // - ModifiedDate = null
+                    return walletRepository.save(wallet)
+                        .map(savedWallet -> ResponseUtil.returnOk(new CreateWalletCommandResult()));
+                })
+            );
     }
 }

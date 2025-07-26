@@ -1,5 +1,7 @@
 package com.wallet.common.mediator;
 
+import reactor.core.publisher.Mono;
+
 public interface Mediator {
-    <C, R> R send(C commandOrQuery);
+    <C, R> Mono<R> send(C commandOrQuery);
 }

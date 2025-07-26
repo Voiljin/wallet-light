@@ -10,7 +10,9 @@ import com.wallet.common.mediator.Mediator;
 import com.wallet.walletapi.contract.request.command.CreateWalletCommand;
 import com.wallet.walletapi.contract.response.command.CreateWalletCommandResult;
 
-@RestController
+import reactor.core.publisher.Mono;
+
+@RestController 
 @RequestMapping("/wallet")
 public class WalletController {
 
@@ -22,7 +24,7 @@ public class WalletController {
     }
 
     @PostMapping
-    public CreateWalletCommandResult createWallet(@RequestBody CreateWalletCommand command) {
+    public Mono<CreateWalletCommandResult> createWallet(@RequestBody CreateWalletCommand command) {
         return mediator.send(command);
     }
 }

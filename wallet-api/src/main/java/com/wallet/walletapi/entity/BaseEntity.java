@@ -3,23 +3,38 @@ package com.wallet.walletapi.entity;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.MappedSuperclass;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.domain.Persistable;
+import org.springframework.data.relational.core.mapping.Column;
+
 import lombok.Data;
+import lombok.Setter;
 
 @Data
-@MappedSuperclass
-public class BaseEntity {
+public abstract class BaseEntity implements Persistable<UUID> {
     
     @Id
-    @GeneratedValue
+    @Column("id")
     private UUID id;
 
-    @Column(name = "created_date")
+    @Setter
+    @Column("created_date")
     private LocalDateTime createdDate;
 
-    @Column(name = "modified_date")
+    @Setter
+    @Column("modified_date")
     private LocalDateTime modifiedDate;
+
+    @Transient
+    private boolean isNew = true;
+    
+    @Override
+    public boolean isNew(){
+        return isNew;
+    }
+
+    public void setNew(boolean isNew){
+        this.isNew = isNew;
+    }
 }

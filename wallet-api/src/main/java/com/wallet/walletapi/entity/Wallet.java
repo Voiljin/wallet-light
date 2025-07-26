@@ -3,36 +3,35 @@ package com.wallet.walletapi.entity;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.AccessLevel;
 
 @Getter
-@Entity
-@Table(name = "wallet")
+@Table("wallet")
 public class Wallet extends AggregateRoot {
 
     @Setter(AccessLevel.PROTECTED)
-    @Column(name = "customer_id", nullable = false)
+    @Column("customer_id")
     private UUID customerId;
 
     @Setter(AccessLevel.PROTECTED)
-    @Column(name = "cash_amount", precision = 18, scale = 2, nullable = false)
+    @Column("cash_amount")
     private BigDecimal cashAmount;
 
     @Setter(AccessLevel.PROTECTED)
-    @Column(name = "email", length = 100, nullable = false)
+    @Column("email")
     private String email;
 
     @Setter(AccessLevel.PROTECTED)
-    @Column(name = "gsm_number", length = 12, nullable = false)
+    @Column("gsm_number")
     private String gsmNumber;
 
     @Setter(AccessLevel.PROTECTED)
-    @Column(name = "is_active", nullable = false)
+    @Column("is_active")
     private Boolean isActive;
 
     public Wallet() {
