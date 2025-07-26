@@ -8,8 +8,5 @@ import lombok.ToString;
 @Data
 @ToString(callSuper = true)
 public class CreateWalletCommandResult extends ResponseBase {
-    private String walletId;
-    private String userId;
-    private String currency;
-    private double balance;
+
 }

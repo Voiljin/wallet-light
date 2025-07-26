@@ -17,9 +17,9 @@ public class BaseEntity {
     @GeneratedValue
     private UUID id;
 
-    @Column(name = "CreatedDate")
+    @Column(name = "created_date")
     private LocalDateTime createdDate;
 
-    @Column(name = "ModifiedDate")
+    @Column(name = "modified_date")
     private LocalDateTime modifiedDate;
 }

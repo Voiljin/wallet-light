@@ -25,6 +25,4 @@ public class WalletController {
     public CreateWalletCommandResult createWallet(@RequestBody CreateWalletCommand command) {
         return mediator.send(command);
     }
-
-    
 }

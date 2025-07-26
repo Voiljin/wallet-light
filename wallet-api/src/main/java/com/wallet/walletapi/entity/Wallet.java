@@ -12,28 +12,32 @@ import lombok.AccessLevel;
 
 @Getter
 @Entity
-@Table(name = "Wallet")
+@Table(name = "wallet")
 public class Wallet extends AggregateRoot {
 
     @Setter(AccessLevel.PROTECTED)
-    @Column(name = "CustomerId", nullable = false)
+    @Column(name = "customer_id", nullable = false)
     private UUID customerId;
 
     @Setter(AccessLevel.PROTECTED)
-    @Column(name = "CashAmount", precision = 18, scale = 2, nullable = false)
+    @Column(name = "cash_amount", precision = 18, scale = 2, nullable = false)
     private BigDecimal cashAmount;
 
     @Setter(AccessLevel.PROTECTED)
-    @Column(name = "Email", length = 100, nullable = false)
+    @Column(name = "email", length = 100, nullable = false)
     private String email;
 
     @Setter(AccessLevel.PROTECTED)
-    @Column(name = "GsmNumber", length = 12, nullable = false)
+    @Column(name = "gsm_number", length = 12, nullable = false)
     private String gsmNumber;
 
     @Setter(AccessLevel.PROTECTED)
-    @Column(name = "IsActive", nullable = false)
+    @Column(name = "is_active", nullable = false)
     private Boolean isActive;
+
+    public Wallet() {
+
+    }
 
     public Wallet(UUID customerId, BigDecimal cashAmount, String email, String gsmNumber, Boolean isActive){
         this.customerId = customerId;
