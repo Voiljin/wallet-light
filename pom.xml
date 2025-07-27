@@ -12,6 +12,7 @@
     <modules>
         <module>common</module>
         <module>wallet-api</module>
+        <module>notification-api</module>
     </modules>
 
     <properties>
