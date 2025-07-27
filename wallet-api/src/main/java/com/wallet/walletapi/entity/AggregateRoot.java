@@ -6,7 +6,8 @@ import java.util.List;
 
 import org.springframework.data.annotation.Transient;
 
-import com.wallet.walletapi.domain.DomainEvent;
+import com.wallet.common.domain.DomainEvent;
+
 
 public abstract class AggregateRoot extends BaseEntity {
 

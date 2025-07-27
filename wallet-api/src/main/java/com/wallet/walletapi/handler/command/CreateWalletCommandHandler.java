@@ -1,10 +1,12 @@
 package com.wallet.walletapi.handler.command;
 
 import com.wallet.common.contract.ResponseUtil;
+import com.wallet.common.domain.DomainEventPublisher;
 import com.wallet.common.exception.CustomException;
 import com.wallet.common.mediator.CommandHandler;
 import com.wallet.walletapi.contract.request.command.CreateWalletCommand;
 import com.wallet.walletapi.contract.response.command.CreateWalletCommandResult;
+import com.wallet.walletapi.domain.event.WalletCreatedEvent;
 import com.wallet.walletapi.entity.Wallet;
 import com.wallet.walletapi.repository.WalletRepository;
 import com.wallet.walletapi.util.ReturnMessages;
@@ -20,6 +22,9 @@ public class CreateWalletCommandHandler implements CommandHandler<CreateWalletCo
 
     @Autowired
     private WalletRepository walletRepository;
+
+    @Autowired
+    private DomainEventPublisher domainEventPublisher;
 
     @Override
     public Mono<CreateWalletCommandResult> handle(CreateWalletCommand command) {
@@ -38,13 +43,15 @@ public class CreateWalletCommandHandler implements CommandHandler<CreateWalletCo
                         command.getGsmNumber(), 
                         true
                     );
-                    
-                    // EntityListener otomatik olarak:
-                    // - ID = gen_random_uuid() (DB'de)
-                    // - CreatedDate = now
-                    // - ModifiedDate = null
+
                     return walletRepository.save(wallet)
-                        .map(savedWallet -> ResponseUtil.returnOk(new CreateWalletCommandResult()));
+                        .flatMap(savedWallet -> {
+                            WalletCreatedEvent event = new WalletCreatedEvent(savedWallet);
+
+                            domainEventPublisher.publish(event).subscribe();
+
+                            return Mono.just(ResponseUtil.returnOk(new CreateWalletCommandResult()));
+                        });
                 })
             );
     }
