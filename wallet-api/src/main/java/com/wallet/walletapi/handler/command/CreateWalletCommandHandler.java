@@ -14,17 +14,19 @@ import com.wallet.walletapi.util.ReturnMessages;
 import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CreateWalletCommandHandler implements CommandHandler<CreateWalletCommand, Mono<CreateWalletCommandResult>> {
 
-    @Autowired
-    private WalletRepository walletRepository;
+    private final WalletRepository walletRepository;
+    private final DomainEventPublisher domainEventPublisher;
 
-    @Autowired
-    private DomainEventPublisher domainEventPublisher;
+    public CreateWalletCommandHandler(WalletRepository walletRepository, 
+                                     DomainEventPublisher domainEventPublisher) {
+        this.walletRepository = walletRepository;
+        this.domainEventPublisher = domainEventPublisher;
+    }
 
     @Override
     public Mono<CreateWalletCommandResult> handle(CreateWalletCommand command) {

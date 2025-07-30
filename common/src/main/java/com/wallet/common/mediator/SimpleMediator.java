@@ -1,7 +1,6 @@
 package com.wallet.common.mediator;
 
 import org.springframework.aop.framework.AopProxyUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +15,6 @@ public class SimpleMediator implements Mediator {
 
     private final ApplicationContext context;
 
-    @Autowired
     public SimpleMediator(ApplicationContext context) {
         this.context = context;
     }
